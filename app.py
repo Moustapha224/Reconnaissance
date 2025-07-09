@@ -38,13 +38,13 @@ def get_face_encoding(image):
     if image is None:
         return None
 
-    # Conversion en RGB si nécessaire
+    # Vérification et conversion
     try:
         if len(image.shape) == 2:
             image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-        elif len(image.shape) == 3 and image.shape[2] == 4:
+        elif image.shape[2] == 4:
             image = cv2.cvtColor(image, cv2.COLOR_BGRA2RGB)
-        elif len(image.shape) == 3 and image.shape[2] == 3:
+        elif image.shape[2] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         else:
             return None
@@ -70,17 +70,21 @@ if os.path.exists(KNOWN_FACES_DIR) and os.path.isdir(KNOWN_FACES_DIR):
         for filename in os.listdir(person_dir):
             if not filename.lower().endswith(('.jpg', '.jpeg', '.png')):
                 continue
+
             img_path = os.path.join(person_dir, filename)
-            img = cv2.imread(img_path)
-            if img is None:
-                st.warning(f"⚠️ Image illisible ignorée : {img_path}")
-                continue
-            encoding = get_face_encoding(img)
-            if encoding is not None:
-                known_encodings.append(encoding)
-                known_names.append(name)
-            else:
-                st.warning(f"⚠️ Visage non détecté ou image invalide : {img_path}")
+
+            try:
+                pil_img = Image.open(img_path).convert("RGB")
+                img = np.array(pil_img)
+                encoding = get_face_encoding(img)
+
+                if encoding is not None:
+                    known_encodings.append(encoding)
+                    known_names.append(name)
+                else:
+                    st.warning(f"⚠️ Visage non détecté : {img_path}")
+            except Exception as e:
+                st.warning(f"❌ Erreur de lecture image : {img_path} - {e}")
 else:
     st.warning(f"📂 Le dossier {KNOWN_FACES_DIR} est introuvable ou vide.")
 
@@ -129,7 +133,7 @@ if start_cam:
                 cv2.putText(frame, name, (left, top - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
 
             stframe.image(frame, channels="BGR")
-            time.sleep(0.03)  # pour limiter le CPU
+            time.sleep(0.03)
 
         cap.release()
         cv2.destroyAllWindows()
