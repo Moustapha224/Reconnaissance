@@ -10,7 +10,7 @@ import tempfile
 import time
 
 # ========== CONFIGURATION ==========
-KNOWN_FACES_DIR = "Known_faces"
+KNOWN_FACES_DIR = "Known_faces_clean"
 SHAPE_PREDICTOR_URL = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
 FACE_ENCODER_URL = "http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2"
 SHAPE_PREDICTOR_PATH = "shape_predictor_68_face_landmarks.dat"
