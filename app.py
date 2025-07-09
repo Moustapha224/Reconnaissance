@@ -9,7 +9,7 @@ import bz2
 import time
 
 # ========== CONFIGURATION ==========
-KNOWN_FACES_DIR = "Known_faces"
+KNOWN_FACES_DIR = "Known_faces_clean"  # <- dossier nettoyé
 SHAPE_PREDICTOR_URL = "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
 FACE_ENCODER_URL = "http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2"
 SHAPE_PREDICTOR_PATH = "shape_predictor_68_face_landmarks.dat"
@@ -38,7 +38,6 @@ def get_face_encoding(image):
     if image is None:
         return None
 
-    # Vérification et conversion
     try:
         if len(image.shape) == 2:
             image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
@@ -122,7 +121,6 @@ if start_cam:
                     match_index = matches.index(True)
                     name = known_names[match_index]
 
-                # Mise à l'échelle
                 top, right, bottom, left = (face_rect.top(), face_rect.right(), face_rect.bottom(), face_rect.left())
                 top *= 4
                 right *= 4
